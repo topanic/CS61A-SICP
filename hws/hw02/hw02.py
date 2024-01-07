@@ -144,10 +144,17 @@ def successor(n):
 def one(f):
     """Church numeral 1: same as successor(zero)"""
     "*** YOUR CODE HERE ***"
+    def func(x):
+        return f(x)
+    return func
+        
 
 def two(f):
     """Church numeral 2: same as successor(successor(zero))"""
     "*** YOUR CODE HERE ***"
+    def ffx(x):
+        return f(f(x))
+    return ffx
 
 three = successor(two)
 
