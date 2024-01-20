@@ -43,8 +43,8 @@ def berry_finder(t):
     if label(t) == 'berry':
         return True
     else:
-        for son in branches(t):
-            if berry_finder(son):
+        for branch in branches(t):
+            if berry_finder(branch):
                 return True
         return False
 
@@ -83,6 +83,10 @@ def sprout_leaves(t, leaves):
           2
     """
     "*** YOUR CODE HERE ***"
+    if is_leaf(t):
+        return tree(label(t), [tree(x) for x in leaves])
+    else:
+        return tree(label(t), [sprout_leaves(branch, leaves) for branch in branches[t]])
 
 # Abstraction tests for sprout_leaves and berry_finder
 def check_abstraction():
@@ -169,6 +173,16 @@ def add_trees(t1, t2):
       5
     """
     "*** YOUR CODE HERE ***"
+    if is_leaf(t1):
+        return tree(label(t1) + label(t2), branches(t2))
+    if is_leaf(t2):
+        return tree(label(t1) + label(t2), branches(t1))
+    else:
+        fewer_branch_t, more_branch_t = sorted([branches(t1), branches(t2)], key=len)
+        pad_t1 = fewer_branch_t + [tree(0) for _ in range(len(more_branch_t) - len(fewer_branch_t))]
+        pad_t2 = more_branch_t
+        return tree(label(t1) + label(t2),\
+                [add_trees(b1, b2) for b1, b2 in zip(pad_t1, pad_t2)])
 
 
 def build_successors_table(tokens):
@@ -190,6 +204,9 @@ def build_successors_table(tokens):
     for word in tokens:
         if prev not in table:
             "*** YOUR CODE HERE ***"
+            table[prev] = [word]
+        else:
+            table[prev] += [word]
         "*** YOUR CODE HERE ***"
         prev = word
     return table
@@ -208,6 +225,9 @@ def construct_sent(word, table):
     result = ''
     while word not in ['.', '!', '?']:
         "*** YOUR CODE HERE ***"
+        result += ' '
+        result += word
+        word = random.choice(table[word])
     return result.strip() + word
 
 def shakespeare_tokens(path='shakespeare.txt', url='http://composingprograms.com/shakespeare.txt'):
